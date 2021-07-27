@@ -1,0 +1,5 @@
+
+STORAGE_PATH = "storage/"
+GENERATED_BY_TYPE = STORAGE_PATH+"2018_2019_waste.csv"
+ENERGY_SAVED = STORAGE_PATH+"energy_saved.csv"
+WASTE_STATS = STORAGE_PATH+"wastestats.csv"
