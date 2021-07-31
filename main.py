@@ -1,7 +1,8 @@
 from common import file_names
 from common.io import csv_reader
+from services import waste_2018_2019_processor
 
 
-csv_reader.CsvReader.read_csv_to_dict(file_names.ENERGY_SAVED)
+waste_2018_2019_processor.get_energy_saved()
 
 
