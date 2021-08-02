@@ -7,6 +7,8 @@ import services.energy_saved_processor as energy_processor
 
 import pandas as pd
 
+from common.classes.waste_type import WasteType
+
 
 def get_energy_saved():
     df = pd.read_csv(file_names.GENERATED_BY_TYPE)
@@ -34,7 +36,10 @@ def get_energy_saved():
         '''
             For each waste type
         '''
-        for waste_type in values.TARGET_WASTE_TYPES:
+
+        for name, waste_type_enum in WasteType.__members__.items():
+            waste_type = get_localized_waste_type(waste_type_enum)
+            print(f"Waste Type Enum = {waste_type_enum}: ==> {waste_type}")
 
             # Get the target row for current waste type
             target_row = current_year_df[current_year_df["Waste Type"] == waste_type]
@@ -51,7 +56,7 @@ def get_energy_saved():
 
                 # Fetch the conversion factor
                 # Conversion factor is the number of KwH that one metric tonne can produce
-                conversion_factor = energy_processor.get_conversion_factor(target_row.iloc[0]["Waste Type"])
+                conversion_factor = energy_processor.get_conversion_factor(waste_type_enum)
                 conversion_factor = float(conversion_factor)
 
                 # Calculate the energy saved for the current waste type in the current year
@@ -65,3 +70,14 @@ def get_energy_saved():
 
         print(result.items())
     return result
+
+
+def get_localized_waste_type(waste_type_enum):
+    if waste_type_enum == WasteType.FERROUS_METAL:
+        return "Ferrous Metal"
+    elif waste_type_enum == WasteType.GLASS:
+        return "Glass"
+    elif waste_type_enum == WasteType.NON_FERROUS_METAL:
+        return "Non-Ferrous Metal"
+    elif waste_type_enum == WasteType.PLASTIC:
+        return "Plastics"

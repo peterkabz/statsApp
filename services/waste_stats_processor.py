@@ -3,6 +3,7 @@ This method will fetch data from the
 """
 from common import file_names
 from common import values
+from common.classes.waste_type import WasteType
 import services.energy_saved_processor as energy_processor
 
 import pandas as pd
@@ -31,7 +32,8 @@ def get_energy_saved():
         '''
          For each waste type
         '''
-        for waste_type in values.TARGET_WASTE_TYPES:
+        for name, waste_type_enum in WasteType.__members__.items():
+            waste_type = get_localized_waste_type(waste_type_enum)
 
             # Get the target row for current waste type
             target_row = current_year_df[current_year_df["waste_type"] == waste_type]
@@ -47,8 +49,8 @@ def get_energy_saved():
                 print(f"\nTotal recycled for {waste_type} is {total_recycled}")
                 total_recycled = float(total_recycled)
                 # Fetch the conversion factor
-                # Conversion factor is the number of KwH that one metric tonne can produce
-                conversion_factor = energy_processor.get_conversion_factor(target_row.iloc[0]["waste_type"])
+                # Conversion factor is the number of KwH that one metric tonne can produces
+                conversion_factor = energy_processor.get_conversion_factor(waste_type_enum)
                 conversion_factor = float(conversion_factor)
 
                 energy_saved = \
@@ -59,3 +61,16 @@ def get_energy_saved():
 
         print(result.items())
     return result
+
+
+def get_localized_waste_type(waste_type_enum):
+    if waste_type_enum == WasteType.FERROUS_METAL:
+        return "Ferrous Metal"
+    elif waste_type_enum == WasteType.GLASS:
+        return "Glass"
+    elif waste_type_enum == WasteType.NON_FERROUS_METAL:
+        return "Non-ferrous Metals"
+    elif waste_type_enum == WasteType.PLASTIC:
+        return "Plastics"
+
+

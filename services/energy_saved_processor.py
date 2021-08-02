@@ -7,8 +7,11 @@ from common import file_names
 
 import pandas as pd
 
+from common.classes.waste_type import WasteType
 
-def get_conversion_factor(waste_type):
+
+def get_conversion_factor(waste_type_enum):
+    waste_type = get_localized_waste_type(waste_type_enum)
     df = pd.read_csv(file_names.ENERGY_SAVED, skiprows=3, header=None)
 
     # transpose the columns and row
@@ -33,3 +36,14 @@ def get_conversion_factor(waste_type):
         print(f"Conversion factor for {waste_type} IS {target.iloc[0]['energy_saved']}")
         factor = target.iloc[0]["energy_saved"]
     return factor
+
+
+def get_localized_waste_type(waste_type_enum):
+    if waste_type_enum == WasteType.FERROUS_METAL:
+        return "Ferrous Metal"
+    elif waste_type_enum == WasteType.GLASS:
+        return "Glass"
+    elif waste_type_enum == WasteType.NON_FERROUS_METAL:
+        return "Non-Ferrous Metal"
+    elif waste_type_enum == WasteType.PLASTIC:
+        return "Plastic"
