@@ -3,15 +3,15 @@ This method will fetch data about a given waste type from
 the energy saved file then calculate the 'conversion factor' used to calculate
 the energy saved
 """
+from classes.file_column_processor import get_waste_type_labels
+from classes.waste_type import WasteType
 from common import file_names
 
 import pandas as pd
 
-from common.classes.waste_type import WasteType
 
-
-def get_conversion_factor(waste_type_enum):
-    waste_type = get_localized_waste_type(waste_type_enum)
+def get_conversion_factor(waste_type_name):
+    waste_type_labels = get_waste_type_labels(waste_type_name)
     df = pd.read_csv(file_names.ENERGY_SAVED, skiprows=3, header=None)
 
     # transpose the columns and row
@@ -29,21 +29,13 @@ def get_conversion_factor(waste_type_enum):
     df2['crude_oil saved'] = df2['crude_oil saved'].map(lambda x: x.rstrip('barrels'))
 
     # extract the target row based on the provided argument, waste_type
-    target = df2[df2["material"] == waste_type]
+    target = df2[df2["material"].isin(waste_type_labels)]
 
     factor = 0
     if len(target) > 0:
-        print(f"Conversion factor for {waste_type} IS {target.iloc[0]['energy_saved']}")
+        print(f"Conversion factor for {waste_type_labels} IS {target.iloc[0]['energy_saved']}")
         factor = target.iloc[0]["energy_saved"]
     return factor
 
 
-def get_localized_waste_type(waste_type_enum):
-    if waste_type_enum == WasteType.FERROUS_METAL:
-        return "Ferrous Metal"
-    elif waste_type_enum == WasteType.GLASS:
-        return "Glass"
-    elif waste_type_enum == WasteType.NON_FERROUS_METAL:
-        return "Non-Ferrous Metal"
-    elif waste_type_enum == WasteType.PLASTIC:
-        return "Plastic"
+

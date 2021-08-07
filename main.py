@@ -1,3 +1,5 @@
+import os
+
 from common import file_names
 from collections import Counter
 from collections import OrderedDict
@@ -5,6 +7,9 @@ from collections import OrderedDict
 from services import waste_2018_2019_processor
 from services import waste_stats_processor
 import pandas as pd
+from dotenv import load_dotenv
+
+load_dotenv()
 
 results_2018_2019 = waste_2018_2019_processor.get_energy_saved()
 results_2015_2018 = waste_stats_processor.get_energy_saved()
@@ -16,7 +21,6 @@ final_results = results_2018_2019 + results_2015_2018
 
 # Sort the results
 final_results = OrderedDict(sorted(final_results.items()))
-
 
 # Extract data frame
 final_df = pd.DataFrame({
@@ -30,7 +34,4 @@ print(final_df)
 print("##############END FINAL RESULT#####################")
 print("#######################################")
 
-final_df.to_csv("final_results.csv",index=False)
-
-
-
+final_df.to_csv("final_results.csv", index=False)
